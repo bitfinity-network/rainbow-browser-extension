@@ -1,13 +1,12 @@
 {
   "action": {
     "default_icon": {
-      "16": "images/icon-16.png",
-      "19": "images/icon-19.png",
-      "32": "images/icon-16@2x.png",
-      "38": "images/icon-19@2x.png",
-      "64": "images/icon-16@4x.png",
-      "128": "images/icon-16@8x.png",
-      "512": "images/icon-16@32x.png"
+      "16": "images/icon16.png",
+    "19": "images/icon19.png",
+    "32": "images/icon32.png",
+    "38": "images/icon38.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
     },
     "default_popup": "popup.html"
   },
@@ -47,17 +46,16 @@
     "wss://*/*"
   ],
   "icons": {
-    "16": "images/icon-16.png",
-    "19": "images/icon-19.png",
-    "32": "images/icon-16@2x.png",
-    "38": "images/icon-19@2x.png",
-    "64": "images/icon-16@4x.png",
-    "128": "images/icon-16@8x.png",
-    "512": "images/icon-16@32x.png"
+    "16": "images/icon16.png",
+    "19": "images/icon19.png",
+    "32": "images/icon32.png",
+    "38": "images/icon38.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
   },
   "manifest_version": 3,
   "minimum_chrome_version": "88",
-  "name": "Rainbow DEVELOPMENT BUILD",
+  "name": "Bitfinity Wallet DEVELOPMENT BUILD",
   "permissions": [
     "activeTab",
     "clipboardWrite",
@@ -67,8 +65,8 @@
     "unlimitedStorage",
     "notifications"
   ],
-  "short_name": "Rainbow",
-  "version": "1.4.13",
+  "short_name": "Bitfinity Wallet",
+  "version": "1.0.0",
   "web_accessible_resources": [
     {
       "matches": [
@@ -90,7 +88,7 @@
         "chromeos": "Alt+Shift+R",
         "linux": "Alt+Shift+R"
       },
-      "description": "Open the Rainbow Wallet extension"
+      "description": "Open the Bitfinity Wallet extension"
     }
   }
 }

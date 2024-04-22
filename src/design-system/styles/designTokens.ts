@@ -1,5 +1,24 @@
 import { SFSymbolName } from '../symbols/generated/types';
 
+export const bitfinityColors = {
+  light: {
+    primary: '#752764',
+    primaryLight: '#A75996',
+    primaryHover: '#570A46',
+    primary30: 'rgba(117, 39, 100, 0.32)',
+    primary10: 'rgba(117, 39, 100, 0.12)',
+    primary3: 'rgba(117, 39, 100, 0.04)',
+  },
+  dark: {
+    primary: '#207AF9',
+    primaryLight: '#6CA9FF',
+    primaryHover: '#0061EB',
+    primary32: 'rgba(32, 122, 249, 0.32)',
+    primary16: 'rgba(32, 122, 249, 0.16)',
+    primary4: 'rgba(32, 122, 249, 0.04)',
+  },
+};
+
 export const globalColors = {
   greenA10: 'rgba(29, 184, 71, 0.1)',
   green10: '#EAFCE8',
@@ -546,7 +565,8 @@ export type ForegroundColor =
   | 'base'
   | 'zora'
   | 'bsc'
-  | 'avalanche';
+  | 'avalanche'
+  | 'welcomeText';
 
 export const foregroundColors: Record<
   ForegroundColor,
@@ -640,6 +660,10 @@ export const foregroundColors: Record<
     light: '#EBAF09',
     dark: '#FF5D5E',
   },
+  welcomeText: {
+    light: globalColors.grey80,
+    dark: globalColors.white60,
+  },
 };
 
 function selectForegroundColors<
@@ -695,6 +719,7 @@ export const textColors = selectForegroundColors(
   'zora',
   'bsc',
   'avalanche',
+  'welcomeText',
   ...genericColors,
 );
 export type TextColor = (typeof textColors)[number];

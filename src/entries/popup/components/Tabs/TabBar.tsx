@@ -18,8 +18,6 @@ import HomeIcon from './TabIcons/Home';
 import HomeSelected from './TabIcons/HomeSelected';
 import NFTsIcon from './TabIcons/NFTs';
 import NFTsSelected from './TabIcons/NFTsSelected';
-import PointsIcon from './TabIcons/Points';
-import PointsSelected from './TabIcons/PointsSelected';
 
 export type Tab = (typeof TABS)[number];
 
@@ -62,11 +60,11 @@ const tabConfig: TabConfigType[] = [
     SelectedIcon: NFTsSelected,
     name: 'nfts',
   },
-  {
-    Icon: PointsIcon,
-    SelectedIcon: PointsSelected,
-    name: 'points',
-  },
+  // {
+  //   Icon: PointsIcon,
+  //   SelectedIcon: PointsSelected,
+  //   name: 'points',
+  // },
 ];
 
 export function TabBar({

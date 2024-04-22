@@ -2,8 +2,8 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { motion } from 'framer-motion';
 import uniqBy from 'lodash/uniqBy';
-import { memo, useCallback, useMemo, useState } from 'react';
-import { Address } from 'wagmi';
+import { memo, useMemo, useState } from 'react';
+import { Chain } from 'wagmi';
 
 import { i18n } from '~/core/languages';
 import { supportedCurrencies } from '~/core/references';
@@ -15,18 +15,23 @@ import {
 } from '~/core/resources/_selectors/assets';
 import { useUserAssets } from '~/core/resources/assets';
 import { useCustomNetworkAssets } from '~/core/resources/assets/customNetworkAssets';
-import { fetchProviderWidgetUrl } from '~/core/resources/f2c';
-import { FiatProviderName } from '~/core/resources/f2c/types';
-import { useCurrentAddressStore, useCurrentCurrencyStore } from '~/core/state';
+import {
+  useCurrentAddressStore,
+  useCurrentCurrencyStore,
+  useRainbowChainsStore,
+} from '~/core/state';
 import { useCurrentThemeStore } from '~/core/state/currentSettings/currentTheme';
 import { useHideAssetBalancesStore } from '~/core/state/currentSettings/hideAssetBalances';
 import { useHideSmallBalancesStore } from '~/core/state/currentSettings/hideSmallBalances';
-import { useTestnetModeStore } from '~/core/state/currentSettings/testnetMode';
+import { useRainbowChainAssetsStore } from '~/core/state/rainbowChainAssets';
+import { useUserChainsStore } from '~/core/state/userChains';
 import { ParsedUserAsset } from '~/core/types/assets';
+import { ChainId } from '~/core/types/chains';
 import { truncateAddress } from '~/core/utils/address';
 import { isCustomChain } from '~/core/utils/chains';
 import {
   Box,
+  Button,
   Column,
   Columns,
   Inline,
@@ -40,14 +45,19 @@ import { TextOverflow } from '~/design-system/components/TextOverflow/TextOverfl
 import { CoinRow } from '~/entries/popup/components/CoinRow/CoinRow';
 
 import { Asterisks } from '../../components/Asterisks/Asterisks';
-import { CoinbaseIcon } from '../../components/CoinbaseIcon/CoinbaseIcon';
 import { QuickPromo } from '../../components/QuickPromo/QuickPromo';
+import { triggerToast } from '../../components/Toast/Toast';
 import useKeyboardAnalytics from '../../hooks/useKeyboardAnalytics';
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut';
 import { useRainbowNavigate } from '../../hooks/useRainbowNavigate';
 import { useSystemSpecificModifierKey } from '../../hooks/useSystemSpecificModifierKey';
 import { useTokensShortcuts } from '../../hooks/useTokensShortcuts';
 import { ROUTES } from '../../urls';
+import {
+  bitfinityTestnetInfo,
+  cashiumTestnetToken,
+  demoTestnetToken,
+} from '../../utils/bitnity-tokens';
 
 import { TokensSkeleton } from './Skeletons';
 import { TokenContextMenu } from './TokenDetails/TokenContextMenu';
@@ -74,6 +84,81 @@ const TokenRow = memo(function TokenRow({
     </TokenContextMenu>
   );
 });
+
+const AddBitfinityTokens = ({ onAddTokens }: { onAddTokens: () => void }) => {
+  const { addCustomRPC, setActiveRPC } = useRainbowChainsStore();
+  const { rainbowChainAssets, addRainbowChainAsset } =
+    useRainbowChainAssetsStore();
+  const { addUserChain } = useUserChainsStore();
+
+  const addCashiumToken = () => {
+    addRainbowChainAsset({
+      chainId: ChainId.bitfinityTestnet,
+      rainbowChainAsset: cashiumTestnetToken,
+    });
+  };
+
+  const addDemoTestnetToken = () => {
+    addRainbowChainAsset({
+      chainId: ChainId.sepolia,
+      rainbowChainAsset: demoTestnetToken,
+    });
+  };
+
+  const addBitfinityTokens = () => {
+    const chainId = ChainId.bitfinityTestnet;
+    const { name, symbol, decimals, rpcUrl, explorerUrl, testnet } =
+      bitfinityTestnetInfo;
+    const bitfinityChain: Chain = {
+      id: 355113,
+      name,
+      network: name,
+      nativeCurrency: {
+        symbol,
+        decimals,
+        name: symbol,
+      },
+      rpcUrls: { default: { http: [rpcUrl] }, public: { http: [rpcUrl] } },
+      blockExplorers: {
+        default: {
+          name: explorerUrl,
+          url: explorerUrl,
+        },
+      },
+      testnet,
+    };
+    addCustomRPC({
+      chain: bitfinityChain,
+    });
+    addUserChain({ chainId });
+    triggerToast({
+      title: i18n.t('settings.networks.custom_rpc.network_added'),
+      description: i18n.t(
+        'settings.networks.custom_rpc.network_added_correctly',
+        { networkName: name },
+      ),
+    });
+    setActiveRPC({ rpcUrl, chainId });
+    addCashiumToken();
+    addDemoTestnetToken();
+    onAddTokens();
+    console.error('rainbow chain assets:', JSON.stringify(rainbowChainAssets));
+  };
+
+  return (
+    <Box>
+      <Button
+        color="accent"
+        height="44px"
+        variant="flat"
+        width="full"
+        onClick={addBitfinityTokens}
+      >
+        Add Bitfinity Tokens
+      </Button>
+    </Box>
+  );
+};
 
 export function Tokens() {
   const { currentAddress } = useCurrentAddressStore();
@@ -166,7 +251,7 @@ export function Tokens() {
   }
 
   if (!allAssets?.length) {
-    return <TokensEmptyState depositAddress={currentAddress} />;
+    return <TokensEmptyState />;
   }
 
   return (
@@ -339,149 +424,14 @@ export const AssetRow = memo(function AssetRow({
   );
 });
 
-type EmptyStateProps = {
-  depositAddress: Address;
-};
-
-function TokensEmptyState({ depositAddress }: EmptyStateProps) {
+function TokensEmptyState() {
   const { currentTheme } = useCurrentThemeStore();
-  const { testnetMode } = useTestnetModeStore();
-  const handleCoinbase = useCallback(async () => {
-    const { data } = await fetchProviderWidgetUrl({
-      provider: FiatProviderName.Coinbase,
-      depositAddress,
-      defaultExperience: 'send',
-    });
-    window.open(data.url, '_blank');
-  }, [depositAddress]);
+
+  const [tokensAdded, setTokensAdded] = useState(false);
 
   return (
     <Inset horizontal="20px">
       <Stack space="12px">
-        {!testnetMode && (
-          <Box
-            background="surfaceSecondaryElevated"
-            borderRadius="16px"
-            boxShadow="12px"
-            cursor="pointer"
-            onClick={handleCoinbase}
-            style={{ overflow: 'hidden' }}
-          >
-            <Box
-              background={{ default: 'transparent', hover: 'fillQuaternary' }}
-              cursor="pointer"
-              height="full"
-              padding="16px"
-              width="full"
-            >
-              <Stack space="12px">
-                <Inline alignVertical="center" alignHorizontal="justify">
-                  <Box>
-                    <Inline alignVertical="center" space="7px">
-                      <Box
-                        alignItems="center"
-                        display="flex"
-                        justifyContent="center"
-                        style={{ height: 12, width: 18 }}
-                      >
-                        <CoinbaseIcon showBackground />
-                      </Box>
-                      <Text
-                        as="p"
-                        cursor="pointer"
-                        size="14pt"
-                        color="label"
-                        weight="bold"
-                      >
-                        {i18n.t('tokens_tab.coinbase_title')}
-                      </Text>
-                    </Inline>
-                  </Box>
-                  <Symbol
-                    cursor="pointer"
-                    size={12}
-                    symbol="arrow.up.forward.circle"
-                    weight="semibold"
-                    color="labelTertiary"
-                  />
-                </Inline>
-                <Box alignItems="center" display="flex" style={{ height: 10 }}>
-                  <Text
-                    as="p"
-                    cursor="pointer"
-                    size="11pt"
-                    color="labelTertiary"
-                    weight="bold"
-                  >
-                    {i18n.t('tokens_tab.coinbase_description')}
-                  </Text>
-                </Box>
-              </Stack>
-            </Box>
-          </Box>
-        )}
-
-        {!testnetMode && (
-          <Box
-            borderRadius="16px"
-            padding="16px"
-            style={{
-              boxShadow: `0 0 0 1px ${
-                currentTheme === 'dark'
-                  ? 'rgba(245, 248, 255, 0.025)'
-                  : 'rgba(9, 17, 31, 0.03)'
-              } inset`,
-            }}
-          >
-            <Stack space="12px">
-              <Inline alignVertical="center" space="7px">
-                <Box
-                  alignItems="center"
-                  display="flex"
-                  justifyContent="center"
-                  style={{ height: 12, width: 18 }}
-                >
-                  <Symbol
-                    color="accent"
-                    size={16}
-                    symbol="creditcard.fill"
-                    weight="bold"
-                  />
-                </Box>
-                <Text as="p" size="14pt" color="label" weight="bold">
-                  {i18n.t('tokens_tab.buy_title')}
-                </Text>
-              </Inline>
-              <Box alignItems="center" display="flex" style={{ height: 10 }}>
-                <Text as="p" size="11pt" color="labelTertiary" weight="bold">
-                  {i18n.t('tokens_tab.buy_description_1')}
-                  <Box
-                    background="fillTertiary"
-                    as="span"
-                    borderWidth="1px"
-                    borderColor="separatorTertiary"
-                    boxShadow="1px"
-                    style={{
-                      display: 'inline-block',
-                      width: '16px',
-                      height: '14px',
-                      borderRadius: '4.5px',
-                      verticalAlign: 'middle',
-                      textAlign: 'center',
-                      lineHeight: '12px',
-                      marginLeft: '4px',
-                      marginRight: '4px',
-                    }}
-                  >
-                    {shortcuts.home.BUY.display}
-                  </Box>
-                  {i18n.t('tokens_tab.buy_description_2')}
-                </Text>
-              </Box>
-            </Stack>
-          </Box>
-        )}
-
         <Box
           borderRadius="16px"
           padding="16px"
@@ -562,6 +512,9 @@ function TokensEmptyState({ depositAddress }: EmptyStateProps) {
             </Box>
           </Stack>
         </Box>
+        {!tokensAdded && (
+          <AddBitfinityTokens onAddTokens={() => setTokensAdded(true)} />
+        )}
       </Stack>
     </Inset>
   );

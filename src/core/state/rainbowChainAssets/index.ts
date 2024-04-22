@@ -40,7 +40,11 @@ export const rainbowChainAssetsStore = createStore<RainbowChainAssetsState>(
   (set, get) => ({
     rainbowChainAssets: {},
     addRainbowChainAsset: ({ chainId, rainbowChainAsset }) => {
+      console.error('adding rainbowChainAssets');
+
       const { rainbowChainAssets } = get();
+      console.error('assets:', JSON.stringify(rainbowChainAssets));
+
       const chainIdcustomRPCAsset = rainbowChainAssets[chainId] || [];
       const newCustomRPCAssets = chainIdcustomRPCAsset.concat([
         rainbowChainAsset,

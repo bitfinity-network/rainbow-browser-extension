@@ -55,7 +55,6 @@ import { Header } from './Header';
 import { MoreMenu } from './MoreMenu';
 import { NFTs } from './NFTs/NFTs';
 import { AppConnection } from './NetworkMenu';
-import { Points } from './Points/Points';
 import { TabHeader } from './TabHeader';
 import { Tokens } from './Tokens';
 
@@ -153,7 +152,6 @@ const Tabs = memo(function Tabs({
         {activeTab === 'activity' && <Activities />}
         {activeTab === 'tokens' && <Tokens />}
         {activeTab === 'nfts' && <NFTs />}
-        {activeTab === 'points' && <Points />}
       </Content>
     </>
   );

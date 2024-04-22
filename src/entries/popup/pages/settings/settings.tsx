@@ -5,12 +5,6 @@ import { event } from '~/analytics/event';
 import { i18n, supportedLanguages } from '~/core/languages';
 import { initializeMessenger } from '~/core/messengers';
 import { supportedCurrencies } from '~/core/references';
-import {
-  RAINBOW_FEEDBACK_URL,
-  RAINBOW_LEARN_URL,
-  RAINBOW_SUPPORT_URL,
-  RAINBOW_TWITTER_URL,
-} from '~/core/references/links';
 import { themeOptions } from '~/core/references/themes';
 import {
   useCurrentCurrencyStore,
@@ -33,6 +27,12 @@ import { Menu } from '~/entries/popup/components/Menu/Menu';
 import { MenuContainer } from '~/entries/popup/components/Menu/MenuContainer';
 import { MenuItem } from '~/entries/popup/components/Menu/MenuItem';
 import { SwitchMenu } from '~/entries/popup/components/SwitchMenu/SwitchMenu';
+import {
+  BLOG_URL,
+  DISCORD_URL,
+  DOC_URL,
+  TWITTER_URL,
+} from '~/entries/popup/utils/bitnity-tokens';
 import { logger } from '~/logger';
 
 import packageJson from '../../../../../package.json';
@@ -401,7 +401,7 @@ export function Settings() {
                 weight="semibold"
               />
             }
-            onClick={() => window.open(RAINBOW_SUPPORT_URL, '_blank')}
+            onClick={() => window.open(DOC_URL, '_blank')}
           />
           <MenuItem
             leftComponent={<MenuItem.TextIcon icon="🧠" />}
@@ -416,7 +416,7 @@ export function Settings() {
                 weight="semibold"
               />
             }
-            onClick={() => window.open(RAINBOW_LEARN_URL, '_blank')}
+            onClick={() => window.open(BLOG_URL, '_blank')}
           />
           <MenuItem
             leftComponent={<MenuItem.TextIcon icon="🐦" />}
@@ -431,7 +431,7 @@ export function Settings() {
                 weight="semibold"
               />
             }
-            onClick={() => window.open(RAINBOW_TWITTER_URL, '_blank')}
+            onClick={() => window.open(TWITTER_URL, '_blank')}
           />
           <MenuItem
             last
@@ -447,7 +447,7 @@ export function Settings() {
                 weight="semibold"
               />
             }
-            onClick={() => window.open(RAINBOW_FEEDBACK_URL, '_blank')}
+            onClick={() => window.open(DISCORD_URL, '_blank')}
           />
         </Menu>
         {(process.env.IS_TESTING === 'true' ||

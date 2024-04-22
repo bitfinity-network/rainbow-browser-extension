@@ -79,7 +79,7 @@ export const BackupReminder = () => {
             <Stack space="8px">
               <Button
                 width="full"
-                color="red"
+                color="accent"
                 height="44px"
                 variant="flat"
                 onClick={() => {

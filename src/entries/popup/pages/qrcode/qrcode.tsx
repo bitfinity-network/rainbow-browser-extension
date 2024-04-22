@@ -120,7 +120,7 @@ export const QRCode = ({
     return dots;
   }, [ecl, logoSize, size, value]);
 
-  const logoPosition = size / 2 - logoSize / 2 - logoMargin;
+  const logoPosition = size / 2 - logoSize / 2 + 32;
   const logoWrapperSize = logoSize + logoMargin * 2;
 
   return (
@@ -138,7 +138,6 @@ export const QRCode = ({
       <Box
         style={{
           height: 0,
-          left: logoPosition,
           position: 'relative',
           top: logoPosition,
         }}

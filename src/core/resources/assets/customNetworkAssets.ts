@@ -234,6 +234,8 @@ async function customNetworkAssetsFunction({
             : null;
 
         const chainAssets = rainbowChainAssets?.[chain.id] || [];
+        console.error('other assets on chain:', JSON.stringify(chainAssets));
+
         const chainParsedAssetBalances = await Promise.allSettled(
           chainAssets.map((asset) =>
             getAssetBalance({
@@ -244,25 +246,31 @@ async function customNetworkAssetsFunction({
           ),
         );
 
+        console.error(
+          'chainParsedAssetBalances:',
+          JSON.stringify(chainParsedAssetBalances),
+        );
+
         const chainParsedAssets = chainParsedAssetBalances
           .map((balance, i) => {
             const fulfilledBalance = extractFulfilledValue(balance);
-            return fulfilledBalance &&
-              (filterZeroBalance ? !isZero(fulfilledBalance) : true)
-              ? parseUserAssetBalances({
-                  asset: {
-                    ...chainAssets[i],
-                    chainId: chain.id,
-                    chainName: chain.name as ChainName,
-                    uniqueId: `${chainAssets[i].address}_${chain.id}`,
-                    mainnetAddress: undefined,
-                    isNativeAsset: false,
-                    native: { price: undefined },
-                  },
-                  currency,
-                  balance: fulfilledBalance || '0',
-                })
-              : null;
+            // return fulfilledBalance &&
+            //   (filterZeroBalance ? !isZero(fulfilledBalance) : true)
+            //   ?
+            return parseUserAssetBalances({
+              asset: {
+                ...chainAssets[i],
+                chainId: chain.id,
+                chainName: chain.name as ChainName,
+                uniqueId: `${chainAssets[i].address}_${chain.id}`,
+                mainnetAddress: undefined,
+                isNativeAsset: false,
+                native: { price: undefined },
+              },
+              currency,
+              balance: fulfilledBalance || '0',
+            });
+            // : null;
           })
           .filter(Boolean);
 

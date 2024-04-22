@@ -10,14 +10,13 @@ import React, {
 } from 'react';
 
 import { useCurrentThemeStore } from '~/core/state/currentSettings/currentTheme';
-import { handleAccentColor } from '~/core/utils/colors';
 
 import { accentColorHslVars, avatarColorHslVars } from '../../styles/core.css';
 import {
   BackgroundColor,
   ColorContext,
   backgroundColors,
-  foregroundColors,
+  bitfinityColors,
 } from '../../styles/designTokens';
 import { hslObjectForColor } from '../../styles/hslObjectForColor';
 import { themeClasses } from '../../styles/theme';
@@ -166,7 +165,6 @@ const RawAccentColorProvider = createColorProvider(
 );
 
 export const AccentColorProvider = ({
-  color,
   children,
 }: {
   color?: string;
@@ -175,12 +173,10 @@ export const AccentColorProvider = ({
   const { currentTheme } = useCurrentThemeStore();
   const defaultColor =
     currentTheme === 'light'
-      ? foregroundColors.labelQuaternary.dark
-      : foregroundColors.labelQuaternary.light;
+      ? bitfinityColors.light.primary
+      : bitfinityColors.dark.primary;
   return (
-    <RawAccentColorProvider
-      color={handleAccentColor(currentTheme, color || defaultColor)}
-    >
+    <RawAccentColorProvider color={defaultColor}>
       {children}
     </RawAccentColorProvider>
   );

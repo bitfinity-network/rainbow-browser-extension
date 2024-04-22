@@ -12,7 +12,7 @@ import { RainbowError, logger } from '~/logger';
 export const initFCM = async () => {
   try {
     const supported = await isSwSupported();
-    if(supported){
+    if (supported) {
       initializeApp({
         apiKey: process.env.FIREBASE_API_KEY_BX,
         authDomain: process.env.FIREBASE_AUTH_DOMAIN_BX,
@@ -34,30 +34,34 @@ export const initFCM = async () => {
 
       // Whenever we want to start watching an address we need
       // to subscribe to the topic through our backend
-      // Which requires us to send this token. 
+      // Which requires us to send this token.
       // See BX-732 for more info
-      
 
       // This is the listener for when the app is in the bg
-      onBackgroundMessage(getMessagingSw(getApp()), (payload: MessagePayload) => {
-        logger.info('[SW] Incoming Message: ', {payload});
-        chrome.notifications.create(
-          {
-            type: 'basic',
-            iconUrl: 'images/icon-16@32x.png',
-            title: 'TEST NOTIFICATION FROM BG',
-            message: JSON.stringify(payload, null, 2),
-            priority: 2,
-          },
-          (notificationId: string) => {
-            logger.info('[SW] notification created with id', {notificationId});
-          },
-        );
-      });
-      }
-    } catch (e) {
-      logger.error(new RainbowError('SW: Error initiating FCM'), {
-        message: (e as Error)?.message,
-      });
+      onBackgroundMessage(
+        getMessagingSw(getApp()),
+        (payload: MessagePayload) => {
+          logger.info('[SW] Incoming Message: ', { payload });
+          chrome.notifications.create(
+            {
+              type: 'basic',
+              iconUrl: 'images/icon32.png',
+              title: 'TEST NOTIFICATION FROM BG',
+              message: JSON.stringify(payload, null, 2),
+              priority: 2,
+            },
+            (notificationId: string) => {
+              logger.info('[SW] notification created with id', {
+                notificationId,
+              });
+            },
+          );
+        },
+      );
     }
+  } catch (e) {
+    logger.error(new RainbowError('SW: Error initiating FCM'), {
+      message: (e as Error)?.message,
+    });
+  }
 };

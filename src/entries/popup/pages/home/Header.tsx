@@ -3,7 +3,6 @@ import { motion, useTransform } from 'framer-motion';
 import * as React from 'react';
 import { useAccount } from 'wagmi';
 
-import config from '~/core/firebase/remoteConfig';
 import { i18n } from '~/core/languages';
 import { shortcuts } from '~/core/references/shortcuts';
 import { useFeatureFlagsStore } from '~/core/state/currentSettings/featureFlags';
@@ -15,6 +14,7 @@ import { triggerAlert } from '~/design-system/components/Alert/Alert';
 import { SymbolProps } from '~/design-system/components/Symbol/Symbol';
 import { BoxStyles, TextStyles } from '~/design-system/styles/core.css';
 
+import BitfinityLogo from '../../../../../static/images/bitfinity_logo.png';
 import { AccountName } from '../../components/AccountName/AccountName';
 import { Avatar } from '../../components/Avatar/Avatar';
 import { triggerToast } from '../../components/Toast/Toast';
@@ -24,7 +24,6 @@ import { WalletContextMenu } from '../../components/WalletContextMenu';
 import { useAvatar } from '../../hooks/useAvatar';
 import { useCurrentWalletTypeAndVendor } from '../../hooks/useCurrentWalletType';
 import { useIsFullScreen } from '../../hooks/useIsFullScreen';
-import { useNavigateToSwaps } from '../../hooks/useNavigateToSwaps';
 import { useRainbowNavigate } from '../../hooks/useRainbowNavigate';
 import { useScroll } from '../../hooks/useScroll';
 import { useWallets } from '../../hooks/useWallets';
@@ -116,21 +115,7 @@ export const Header = React.memo(function Header() {
 });
 
 export function AvatarSection() {
-  const { address } = useAccount();
-  const { data: avatar } = useAvatar({ addressOrName: address });
-
-  return (
-    <Avatar.Wrapper size={60} color={avatar?.color}>
-      <>
-        {avatar?.imageUrl ? (
-          <Avatar.Image size={60} imageUrl={avatar.imageUrl} />
-        ) : (
-          <Avatar.Emoji color={avatar?.color} emoji={avatar?.emoji} />
-        )}
-      </>
-      <Avatar.Skeleton />
-    </Avatar.Wrapper>
-  );
+  return <Avatar.Image size={60} imageUrl={BitfinityLogo} />;
 }
 
 function ActionButtonsSection() {
@@ -140,7 +125,6 @@ function ActionButtonsSection() {
   const { isWatchingWallet } = useWallets();
   const { featureFlags } = useFeatureFlagsStore();
   const navigate = useRainbowNavigate();
-  const navigateToSwaps = useNavigateToSwaps();
 
   const handleCopy = React.useCallback(() => {
     navigator.clipboard.writeText(address as string);
@@ -149,13 +133,6 @@ function ActionButtonsSection() {
       description: truncateAddress(address),
     });
   }, [address]);
-
-  const allowSwap = React.useMemo(
-    () =>
-      (!isWatchingWallet || featureFlags.full_watching_wallets) &&
-      config.swaps_enabled,
-    [featureFlags.full_watching_wallets, isWatchingWallet],
-  );
 
   const allowSend = React.useMemo(
     () => !isWatchingWallet || featureFlags.full_watching_wallets,
@@ -215,25 +192,17 @@ function ActionButtonsSection() {
           />
 
           <ActionButton
+            disabled={true}
             symbol="arrow.triangle.swap"
             text={i18n.t('wallet_header.swap')}
             tabIndex={tabIndexes.WALLET_HEADER_SWAP_BUTTON}
             testId={'header-link-swap'}
             onClick={() => {
-              if (!allowSwap) {
-                if (isWatchingWallet) {
-                  alertWatchingWallet();
-                } else {
-                  alertComingSoon();
-                }
-              } else {
-                navigateToSwaps();
-              }
+              alertComingSoon();
             }}
             tooltipHint={shortcuts.home.GO_TO_SWAP.display}
             tooltipText={i18n.t('tooltip.swap')}
           />
-
           <ActionButton
             symbol="paperplane.fill"
             text={i18n.t('wallet_header.send')}
@@ -250,7 +219,7 @@ function ActionButtonsSection() {
             }}
           />
 
-          <ActionButton
+          {/* <ActionButton
             symbol="creditcard.fill"
             testId="header-link-buy"
             text={i18n.t('wallet_header.buy')}
@@ -258,7 +227,7 @@ function ActionButtonsSection() {
             onClick={() => navigate(ROUTES.BUY)}
             tooltipHint={shortcuts.home.BUY.display}
             tooltipText={i18n.t('tooltip.buy_crypto')}
-          />
+          /> */}
         </Inline>
       )}
     </Box>
@@ -274,6 +243,7 @@ function ActionButton({
   tabIndex,
   tooltipHint,
   tooltipText,
+  disabled,
 }: {
   cursor?: BoxStyles['cursor'];
   symbol: SymbolProps['symbol'];
@@ -283,6 +253,7 @@ function ActionButton({
   tabIndex?: number;
   tooltipHint: string;
   tooltipText: string;
+  disabled?: boolean;
 }) {
   return (
     <Stack alignHorizontal="center" space="10px">
@@ -296,11 +267,12 @@ function ActionButton({
         hint={tooltipHint}
       >
         <ButtonSymbol
-          color="accent"
+          color={'accent'}
           cursor={cursor}
           height="36px"
-          variant="raised"
+          variant={disabled ? 'disabled' : 'raised'}
           symbol={symbol}
+          disabled={disabled}
           testId={testId}
           onClick={onClick}
           tabIndex={tabIndex}

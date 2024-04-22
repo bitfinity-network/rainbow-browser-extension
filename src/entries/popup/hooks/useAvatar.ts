@@ -1,60 +1,49 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { resolveEnsAvatar } from '~/core/resources/metadata/ensAvatar';
+import { useCurrentThemeStore } from '~/core/state/currentSettings/currentTheme';
 import {
   WalletAvatar,
   useWalletAvatarStore,
   walletAvatarStore,
 } from '~/core/state/walletAvatar';
+import { bitfinityColors } from '~/design-system/styles/designTokens';
 
-import { emojiAvatarForAddress } from '../utils/emojiAvatarForAddress';
+import BitfinityLogo from '../../../../static/images/bitfinity_logo.png';
 
-import { fetchDominantColor } from './useDominantColor';
-
-const fetchWalletAvatar = async ({
+const fetchDefaultAvatar = ({
   addressOrName,
-  avatarUrl,
+  currentTheme,
 }: {
   addressOrName: string;
-  avatarUrl?: string | null;
-}): Promise<WalletAvatar> => {
+  currentTheme: 'dark' | 'light';
+}): WalletAvatar => {
   const { setWalletAvatar } = walletAvatarStore.getState();
 
-  const ensAvatar =
-    avatarUrl === null
-      ? null
-      : avatarUrl || (await resolveEnsAvatar({ addressOrName }));
-  let correctEnsAvatar = true;
-  let dominantColor = null;
-  try {
-    dominantColor = await fetchDominantColor({ imageUrl: ensAvatar });
-  } catch (e) {
-    correctEnsAvatar = false;
-  }
-  const { color: emojiColor, emoji } = emojiAvatarForAddress(addressOrName);
-  const avatar = {
-    color: correctEnsAvatar ? dominantColor || emojiColor : emojiColor,
-    imageUrl: correctEnsAvatar ? ensAvatar || undefined : undefined,
-    emoji,
+  const defaultAvatar = {
+    color:
+      currentTheme === 'dark'
+        ? bitfinityColors.dark.primary
+        : bitfinityColors.light.primary,
+    imageUrl: BitfinityLogo,
   };
-  setWalletAvatar({ addressOrName, walletAvatar: avatar });
-  return avatar;
+  setWalletAvatar({ addressOrName, walletAvatar: defaultAvatar });
+  return defaultAvatar;
 };
 
 export function useAvatar({
   addressOrName,
-  avatarUrl,
 }: {
   addressOrName?: string;
   avatarUrl?: string | null;
 }) {
   const { walletAvatar } = useWalletAvatarStore();
+  const { currentTheme } = useCurrentThemeStore();
 
   return useQuery(
-    ['walletAvatar', addressOrName],
+    ['walletAvatar', addressOrName, currentTheme],
     async () =>
       addressOrName
-        ? fetchWalletAvatar({ addressOrName, avatarUrl })
+        ? fetchDefaultAvatar({ addressOrName, currentTheme })
         : undefined,
     {
       enabled: !!addressOrName,

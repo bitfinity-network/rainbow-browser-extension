@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { useAccount, useEnsName } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import { i18n } from '~/core/languages';
-import {
-  RAINBOW_FEEDBACK_URL,
-  RAINBOW_SUPPORT_URL,
-} from '~/core/references/links';
 import { shortcuts } from '~/core/references/shortcuts';
 import { useDeveloperToolsEnabledStore } from '~/core/state/currentSettings/developerToolsEnabled';
 import { useTestnetModeStore } from '~/core/state/currentSettings/testnetMode';
-import { getProfileUrl, goToNewTab } from '~/core/utils/tabs';
+import { getExplorerUrl, goToNewTab } from '~/core/utils/tabs';
 import { Box, Inline, Row, Rows, Stack, Symbol, Text } from '~/design-system';
+import {
+  DISCORD_URL,
+  ZENDESK_URL,
+  bitfinityTestnetInfo,
+} from '~/entries/popup/utils/bitnity-tokens';
 
 import {
   DropdownMenu,
@@ -30,17 +31,17 @@ import playSound from '../../utils/playSound';
 
 export const MoreMenu = ({ children }: { children: React.ReactNode }) => {
   const { address } = useAccount();
-  const { data: ensName } = useEnsName({ address });
   const navigate = useRainbowNavigate();
   const { testnetMode, setTestnetMode } = useTestnetModeStore();
   const { developerToolsEnabled } = useDeveloperToolsEnabledStore();
+  const explorerUrl = bitfinityTestnetInfo.explorerUrl;
 
   const openProfile = React.useCallback(
     () =>
       goToNewTab({
-        url: getProfileUrl(ensName ?? address),
+        url: getExplorerUrl(explorerUrl, address),
       }),
-    [address, ensName],
+    [address, explorerUrl],
   );
 
   const handleTestnetMode = React.useCallback(() => {
@@ -75,10 +76,10 @@ export const MoreMenu = ({ children }: { children: React.ReactNode }) => {
           navigate(ROUTES.QR_CODE);
           break;
         case 'support':
-          goToNewTab({ url: RAINBOW_SUPPORT_URL });
+          goToNewTab({ url: ZENDESK_URL });
           break;
         case 'feedback':
-          goToNewTab({ url: RAINBOW_FEEDBACK_URL });
+          goToNewTab({ url: DISCORD_URL });
           break;
         case 'testnet-mode':
           handleTestnetMode();

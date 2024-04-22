@@ -137,6 +137,8 @@ async function userAssetsQueryFunction({
     const supportedChainIds = getBackendSupportedChains({ testnetMode }).map(
       ({ id }) => id,
     );
+    console.error('default supported chains:', supportedChainIds);
+
     const url = `/${supportedChainIds.join(',')}/${address}/assets`;
     const res = await addysHttp.get<AddressAssetsReceivedMessage>(url, {
       params: {

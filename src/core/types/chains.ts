@@ -67,6 +67,7 @@ export enum ChainName {
   arbitrumGoerli = 'arbitrum-goerli',
   baseSepolia = 'base-sepolia',
   zoraSepolia = 'zora-sepolia',
+  bitfinityTestnet = 'bitfinity-testnet',
 }
 
 export enum ChainId {
@@ -100,6 +101,7 @@ export enum ChainId {
   arbitrumSepolia = chain.arbitrumSepolia.id,
   baseSepolia = chain.baseSepolia.id,
   zoraSepolia = chain.zoraSepolia.id,
+  bitfinityTestnet = 355113,
 }
 
 export const chainNameToIdMapping: {
@@ -137,6 +139,7 @@ export const chainNameToIdMapping: {
   [ChainName.arbitrumGoerli]: ChainId.arbitrumGoerli,
   [ChainName.baseSepolia]: ChainId.baseSepolia,
   [ChainName.zoraSepolia]: ChainId.zoraSepolia,
+  [ChainName.bitfinityTestnet]: ChainId.bitfinityTestnet,
 };
 
 export const chainIdToNameMapping: {
@@ -172,6 +175,7 @@ export const chainIdToNameMapping: {
   [ChainId.arbitrumGoerli]: ChainName.arbitrumGoerli,
   [ChainId.baseSepolia]: ChainName.baseSepolia,
   [ChainId.zoraSepolia]: ChainName.zoraSepolia,
+  [ChainId.bitfinityTestnet]: ChainName.bitfinityTestnet,
 };
 
 export const ChainNameDisplay = {

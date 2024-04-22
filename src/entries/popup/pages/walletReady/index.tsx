@@ -3,7 +3,10 @@ import { motion } from 'framer-motion';
 
 import { i18n } from '~/core/languages';
 import { Box, Inline, Separator, Stack, Symbol, Text } from '~/design-system';
+import { DOC_URL } from '~/entries/popup/utils/bitnity-tokens';
 
+import BitfinityLogo from '../../../../../static/images/bitfinity_logo.png';
+import ExternalImage from '../../components/ExternalImage/ExternalImage';
 import { useBrowser } from '../../hooks/useBrowser';
 
 import { ReadyShortcut } from './ReadyShortcut';
@@ -105,7 +108,7 @@ export function WalletReady() {
             paddingVertical="16px"
             as="a"
             display="block"
-            href="https://rainbow.me/extension/get-started"
+            href={DOC_URL}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -119,7 +122,11 @@ export function WalletReady() {
                   borderRadius="round"
                   style={{ width: '18px', height: '18px' }}
                 >
-                  <Box style={{ fontSize: '8px' }}>🌈</Box>
+                  <ExternalImage
+                    src={BitfinityLogo}
+                    width="16px"
+                    height="16px"
+                  />
                 </Box>
                 <Box paddingLeft="8px">
                   <Text

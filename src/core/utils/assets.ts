@@ -421,13 +421,33 @@ export const getAssetBalance = async ({
   currentAddress: Address;
   provider: Provider;
 }) => {
-  const balance = await getContract({
-    address: assetAddress,
-    abi: erc20ABI,
-    signerOrProvider: provider,
-  }).balanceOf(currentAddress);
+  try {
+    console.log(
+      'code exists (Cashium 0xAab0700ef3768009D71cA47E2349069fA0025358):',
+      await provider.getCode('0xAab0700ef3768009D71cA47E2349069fA0025358'),
+      provider.getNetwork(),
+    );
+    console.log(
+      'code exists (Cashium 0x53611Ab037767647498EBd555C4CC339db4Ee617):',
+      await provider.getCode('0x53611Ab037767647498EBd555C4CC339db4Ee617'),
+      provider.getNetwork(),
+    );
 
-  return balance.toString();
+    const contract = getContract({
+      address: assetAddress,
+      abi: erc20ABI,
+      signerOrProvider: provider,
+    });
+
+    console.log('contract:', contract);
+
+    const balance = await contract.balanceOf(currentAddress);
+
+    return balance.toString();
+  } catch (error) {
+    console.error('error fetching asset balance:', error);
+  }
+  return '0';
 };
 
 export const extractFulfilledValue = <T>(

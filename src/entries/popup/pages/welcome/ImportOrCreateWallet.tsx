@@ -7,6 +7,7 @@ import { Box, Button, Inline, Text, ThemeProvider } from '~/design-system';
 import { ButtonOverflow } from '~/design-system/components/Button/ButtonOverflow';
 import { Row, Rows } from '~/design-system/components/Rows/Rows';
 import { accentColorAsHsl } from '~/design-system/styles/core.css';
+import { TERMS_URL } from '~/entries/popup/utils/bitnity-tokens';
 import { RainbowError, logger } from '~/logger';
 
 import { Spinner } from '../../components/Spinner/Spinner';
@@ -158,7 +159,7 @@ export function ImportOrCreateWallet() {
             >
               {i18n.t('welcome.disclaimer_tos')}&nbsp;
               <a
-                href="https://rainbow.me/terms-of-use"
+                href={TERMS_URL}
                 target="_blank"
                 style={{ color: accentColorAsHsl }}
                 rel="noreferrer"

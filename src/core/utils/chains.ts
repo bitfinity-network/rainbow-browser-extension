@@ -25,7 +25,6 @@ import {
   chainNameToIdMapping,
 } from '~/core/types/chains';
 
-import { proxyRpcEndpoint } from '../providers';
 import {
   RAINBOW_CHAINS_SUPPORTED,
   rainbowChainsStore,
@@ -328,7 +327,7 @@ export const getChainMetadataRPCUrl = async ({
   rpcUrl?: string;
 }) => {
   if (rpcUrl && isValidUrl(rpcUrl)) {
-    const provider = new JsonRpcProvider(proxyRpcEndpoint(rpcUrl, 0));
+    const provider = new JsonRpcProvider(rpcUrl);
     const network = await provider.getNetwork();
     return { chainId: network.chainId };
   }

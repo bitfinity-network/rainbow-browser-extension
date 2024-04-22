@@ -25,6 +25,7 @@ export type ButtonSymbolProps = {
   testId?: string;
   tabIndex?: number;
   cursor?: BoxStyles['cursor'];
+  disabled?: boolean;
 } & ButtonVariantProps;
 
 export function ButtonSymbol({

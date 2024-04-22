@@ -85,11 +85,7 @@ export function ReadyShortcut() {
     <>
       <Box paddingBottom="50px">
         <Box display="flex" justifyContent="center" paddingBottom="15px">
-          <OpenText
-            isButtonPressed={
-              isShiftPressed || isRPressed || isOptionPressed || isHighlighted
-            }
-          />
+          <OpenText />
         </Box>
         <Box display="flex" width="full">
           <ShiftPress isShiftPressed={isShiftPressed || isHighlighted} />
