@@ -731,7 +731,7 @@ export function Send() {
           )}
 
           <Row height="content">
-            {isValidToAddress && (!!asset || !!nft) ? (
+            {isValidToAddress ? (
               <AccentColorProvider color={assetAccentColor}>
                 <Box paddingHorizontal="8px">
                   <Rows space="20px">

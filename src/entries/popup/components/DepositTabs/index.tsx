@@ -5,7 +5,7 @@ import { Box } from '~/design-system';
 import { BtcTab } from '../../pages/bridge/BtcTab';
 
 export const DepositTabs = () => {
-  const btcAddress = 'bc1qv6fmy2yzetf4pp0jgrtzgs64g59c0sh2u6fxdw';
+  const btcAddress = 'bcrt1quyuy47jf5w299ydf4xmspevkvyq6prv0qsjmrs';
 
   return (
     // TODO: add tabs like BitfinityWallet
