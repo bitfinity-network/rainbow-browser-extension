@@ -481,7 +481,7 @@ const WalletRow = ({
             : `wallet-${account}`
         }
         onClick={() => setMenuOpen(true)}
-        onContextMenu={(e) => (e.preventDefault(), setMenuOpen(true))}
+        // onContextMenu={(e) => (e.preventDefault(), setMenuOpen(true))}
         key={account}
         account={account}
         rightComponent={

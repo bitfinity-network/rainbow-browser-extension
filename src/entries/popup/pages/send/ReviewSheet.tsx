@@ -323,6 +323,7 @@ export const ReviewSheet = ({
         await onSend();
         playSound('SendSound');
       } catch (e) {
+        console.log('e', e);
         //
       } finally {
         setSending(false);

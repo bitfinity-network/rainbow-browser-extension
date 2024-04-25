@@ -82,6 +82,8 @@ import { ReviewSheet } from './ReviewSheet';
 import { SendTokenInput } from './SendTokenInput';
 import { ToAddressInput } from './ToAddressInput';
 import { ValueInput } from './ValueInput';
+import { BtcBridgeClass } from './btc';
+import { Spinner } from '../../components/Spinner/Spinner';
 
 interface ChildInputAPI {
   blur: () => void;
@@ -162,6 +164,7 @@ export function Send() {
     readyForReview,
     validateToAddress,
     toAddressIsSmartContract,
+    isBtcAddress,
   } = useSendValidations({
     asset,
     assetAmount,
@@ -170,6 +173,8 @@ export function Send() {
     toAddress,
     toAddressOrName,
   });
+
+  console.log('isBtcAddress', isBtcAddress);
 
   const controls = useAnimationControls();
   const transactionRequestForGas: TransactionRequest = useMemo(() => {
@@ -317,9 +322,19 @@ export function Send() {
     async (callback?: () => void) => {
       if (!config.send_enabled) return;
 
+      if (isBtcAddress) {
+        setWaitingForDevice(true);
+        const btcBridge = new BtcBridgeClass();
+        await btcBridge.bridgeBtc(34343, fromAddress);
+        setWaitingForDevice(false);
+        navigate(ROUTES.HOME);
+        return;
+      }
       try {
         if (asset) {
           const { type } = await getWallet(fromAddress);
+
+          console.log('get wallet result', type);
           // Change the label while we wait for confirmation
           if (type === 'HardwareWalletKeychain') {
             setWaitingForDevice(true);
@@ -332,6 +347,7 @@ export function Send() {
             chainId: activeChainId,
             data,
           });
+          console.log('send tx result', result);
           if (result && asset) {
             const transaction: NewTransaction = buildPendingTransaction(result);
             addNewTransaction({
@@ -386,33 +402,37 @@ export function Send() {
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
-        if (!isLedgerConnectionError(e)) {
-          const extractedError = (e as Error).message.split('[')[0];
-          triggerAlert({
-            text: i18n.t('errors.sending_transaction'),
-            description: extractedError,
-          });
-        }
-        logger.error(new RainbowError('send: error executing send'), {
-          message: (e as Error)?.message,
-        });
+        console.log('e', e);
+        // if (!isLedgerConnectionError(e)) {
+        //   const extractedError = (e as Error).message.split('[')[0];
+        //   triggerAlert({
+        //     text: i18n.t('errors.sending_transaction'),
+        //     description: extractedError,
+        //   });
+        // }
+        // logger.error(new RainbowError('send: error executing send'), {
+        //   message: (e as Error)?.message,
+        // });
+        // callback?.();
+        navigate(ROUTES.HOME);
       } finally {
         setWaitingForDevice(false);
       }
     },
     [
+      isBtcAddress,
+      asset,
+      nft,
       fromAddress,
       resetSendValues,
       txToAddress,
       value,
       activeChainId,
       data,
-      asset,
-      assetAmount,
       buildPendingTransaction,
       chainId,
       navigate,
-      nft,
+      assetAmount,
     ],
   );
 
@@ -649,45 +669,47 @@ export function Send() {
               />
             </Row>
 
-            <Row height="content">
-              <AccentColorProvider color={assetAccentColor}>
-                <Box
-                  background="surfaceSecondaryElevated"
-                  borderRadius="24px"
-                  width="full"
-                >
-                  <SendTokenInput
-                    asset={asset}
-                    assets={assets}
-                    selectAssetAddressAndChain={selectAsset}
-                    dropdownClosed={toAddressDropdownOpen}
-                    setSortMethod={setSortMethod}
-                    sortMethod={sortMethod}
-                    ref={sendTokenInputRef}
-                    nft={nft}
-                    nfts={nfts}
-                    nftSortMethod={nftSortMethod}
-                    setNftSortMethod={setNftSortMethod}
-                    selectNft={selectNft}
-                  />
-                  {asset ? (
-                    <ValueInput
+            {!isBtcAddress && (
+              <Row height="content">
+                <AccentColorProvider color={assetAccentColor}>
+                  <Box
+                    background="surfaceSecondaryElevated"
+                    borderRadius="24px"
+                    width="full"
+                  >
+                    <SendTokenInput
                       asset={asset}
-                      currentCurrency={currentCurrency}
-                      dependentAmount={dependentAmountDisplay}
-                      independentAmount={independentAmount}
-                      independentField={independentField}
-                      independentFieldRef={independentFieldRef}
-                      setIndependentAmount={setIndependentAmount}
-                      setMaxAssetAmount={setMaxAssetAmount}
-                      switchIndependentField={switchIndependentField}
-                      inputAnimationControls={controls}
-                      ref={valueInputRef}
+                      assets={assets}
+                      selectAssetAddressAndChain={selectAsset}
+                      dropdownClosed={toAddressDropdownOpen}
+                      setSortMethod={setSortMethod}
+                      sortMethod={sortMethod}
+                      ref={sendTokenInputRef}
+                      nft={nft}
+                      nfts={nfts}
+                      nftSortMethod={nftSortMethod}
+                      setNftSortMethod={setNftSortMethod}
+                      selectNft={selectNft}
                     />
-                  ) : null}
-                </Box>
-              </AccentColorProvider>
-            </Row>
+                    {asset ? (
+                      <ValueInput
+                        asset={asset}
+                        currentCurrency={currentCurrency}
+                        dependentAmount={dependentAmountDisplay}
+                        independentAmount={independentAmount}
+                        independentField={independentField}
+                        independentFieldRef={independentFieldRef}
+                        setIndependentAmount={setIndependentAmount}
+                        setMaxAssetAmount={setMaxAssetAmount}
+                        switchIndependentField={switchIndependentField}
+                        inputAnimationControls={controls}
+                        ref={valueInputRef}
+                      />
+                    ) : null}
+                  </Box>
+                </AccentColorProvider>
+              </Row>
+            )}
           </Rows>
 
           {nft && (
@@ -713,17 +735,25 @@ export function Send() {
               <AccentColorProvider color={assetAccentColor}>
                 <Box paddingHorizontal="8px">
                   <Rows space="20px">
-                    <Row>
-                      <TransactionFee
-                        chainId={chainId}
-                        transactionRequest={transactionRequestForGas}
-                        accentColor={assetAccentColor}
-                        flashbotsEnabled={flashbotsEnabledGlobally}
-                      />
-                    </Row>
+                    {!isBtcAddress && (
+                      <Row>
+                        <TransactionFee
+                          chainId={chainId}
+                          transactionRequest={transactionRequestForGas}
+                          accentColor={assetAccentColor}
+                          flashbotsEnabled={flashbotsEnabledGlobally}
+                        />
+                      </Row>
+                    )}
                     <Row>
                       <Button
-                        onClick={openReviewSheet}
+                        onClick={() => {
+                          if (isBtcAddress) {
+                            handleSend();
+                          } else {
+                            openReviewSheet();
+                          }
+                        }}
                         height="44px"
                         variant="flat"
                         color="accent"
@@ -731,18 +761,29 @@ export function Send() {
                         testId="send-review-button"
                         tabIndex={0}
                       >
-                        <Inline space="8px" alignVertical="center">
-                          {readyForReview && (
-                            <Symbol
-                              symbol="doc.text.magnifyingglass"
-                              weight="bold"
-                              size={16}
-                            />
-                          )}
-                          <Text color="label" size="16pt" weight="bold">
-                            {buttonLabel}
-                          </Text>
-                        </Inline>
+                        {waitingForDevice ? (
+                          <Box
+                            width="fit"
+                            alignItems="center"
+                            justifyContent="center"
+                            style={{ margin: 'auto' }}
+                          >
+                            <Spinner size={16} color="label" />
+                          </Box>
+                        ) : (
+                          <Inline space="8px" alignVertical="center">
+                            {readyForReview && (
+                              <Symbol
+                                symbol="doc.text.magnifyingglass"
+                                weight="bold"
+                                size={16}
+                              />
+                            )}
+                            <Text color="label" size="16pt" weight="bold">
+                              {buttonLabel}
+                            </Text>
+                          </Inline>
+                        )}
                       </Button>
                     </Row>
                   </Rows>

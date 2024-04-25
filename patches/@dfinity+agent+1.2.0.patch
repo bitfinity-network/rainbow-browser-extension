@@ -1,0 +1,156 @@
+diff --git a/node_modules/@dfinity/agent/lib/cjs/observable.js b/node_modules/@dfinity/agent/lib/cjs/observable.js
+index f6a11ae..d52df5a 100644
+--- a/node_modules/@dfinity/agent/lib/cjs/observable.js
++++ b/node_modules/@dfinity/agent/lib/cjs/observable.js
+@@ -7,9 +7,8 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
+ var _Observable_instances, _Observable_call, _ObservableLog_instances, _ObservableLog_call;
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.ObservableLog = exports.Observable = void 0;
+-class Observable extends Function {
++class Observable  {
+     constructor() {
+-        super();
+         _Observable_instances.add(this);
+         this.observers = [];
+         return new Proxy(this, {
+diff --git a/node_modules/@dfinity/agent/lib/esm/agent/http/index.js b/node_modules/@dfinity/agent/lib/esm/agent/http/index.js
+index 9792292..b0739ed 100644
+--- a/node_modules/@dfinity/agent/lib/esm/agent/http/index.js
++++ b/node_modules/@dfinity/agent/lib/esm/agent/http/index.js
+@@ -113,7 +113,16 @@ export class HttpAgent {
+         this._isAgent = true;
+         // The UTC time in milliseconds when the latest request was made
+         _HttpAgent_waterMark.set(this, 0);
+-        this.log = new ObservableLog();
++    
++        // this.log = () => {}
++        this.log = {
++            warn : () => {},
++            info : () => {},
++            error : () => {},
++            subscribe : () => {},
++            notify : () => {},
++            unsubscribe : () => {}
++        }
+         _HttpAgent_queryPipeline.set(this, []);
+         _HttpAgent_updatePipeline.set(this, []);
+         _HttpAgent_subnetKeys.set(this, new ExpirableMap({
+@@ -332,7 +341,7 @@ export class HttpAgent {
+         // Apply transform for identity.
+         transformedRequest = await id.transformRequest(transformedRequest);
+         const body = cbor.encode(transformedRequest.body);
+-        this.log(`fetching "/api/v2/canister/${ecid.toText()}/call" with request:`, transformedRequest);
++        // this.log(`fetching "/api/v2/canister/${ecid.toText()}/call" with request:`, transformedRequest);
+         // Run both in parallel. The fetch is quite expensive, so we have plenty of time to
+         // calculate the requestId locally.
+         const request = this._requestAndRetry(() => this._fetch('' + new URL(`/api/v2/canister/${ecid.toText()}/call`, this._host), Object.assign(Object.assign(Object.assign({}, this._callOptions), transformedRequest.request), { body })));
+@@ -386,8 +395,8 @@ export class HttpAgent {
+         const ecid = fields.effectiveCanisterId
+             ? Principal.from(fields.effectiveCanisterId)
+             : Principal.from(canisterId);
+-        this.log(`ecid ${ecid.toString()}`);
+-        this.log(`canisterId ${canisterId.toString()}`);
++        // this.log(`ecid ${ecid.toString()}`);
++        // this.log(`canisterId ${canisterId.toString()}`);
+         const makeQuery = async () => {
+             const id = await (identity !== undefined ? await identity : await this._identity);
+             if (!id) {
+@@ -441,7 +450,7 @@ export class HttpAgent {
+         // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         // Make query and fetch subnet keys in parallel
+         const [query, subnetStatus] = await Promise.all([makeQuery(), getSubnetStatus()]);
+-        this.log('Query response:', query);
++        // this.log('Query response:', query);
+         // Skip verification if the user has disabled it
+         if (!__classPrivateFieldGet(this, _HttpAgent_verifyQuerySignatures, "f")) {
+             return query;
+@@ -491,7 +500,7 @@ export class HttpAgent {
+         const canister = typeof canisterId === 'string' ? Principal.fromText(canisterId) : canisterId;
+         const transformedRequest = request !== null && request !== void 0 ? request : (await this.createReadStateRequest(fields, identity));
+         const body = cbor.encode(transformedRequest.body);
+-        this.log(`fetching "/api/v2/canister/${canister}/read_state" with request:`, transformedRequest);
++        // this.log(`fetching "/api/v2/canister/${canister}/read_state" with request:`, transformedRequest);
+         // TODO - https://dfinity.atlassian.net/browse/SDK-1092
+         const response = await this._requestAndRetry(() => this._fetch('' + new URL(`/api/v2/canister/${canister}/read_state`, this._host), Object.assign(Object.assign(Object.assign({}, this._fetchOptions), transformedRequest.request), { body })));
+         if (!response.ok) {
+@@ -500,10 +509,10 @@ export class HttpAgent {
+                 `  Body: ${await response.text()}\n`);
+         }
+         const decodedResponse = cbor.decode(await response.arrayBuffer());
+-        this.log('Read state response:', decodedResponse);
++        // this.log('Read state response:', decodedResponse);
+         const parsedTime = await this.parseTimeFromResponse(decodedResponse);
+         if (parsedTime > 0) {
+-            this.log('Read state response time:', parsedTime);
++            // this.log('Read state response time:', parsedTime);
+             __classPrivateFieldSet(this, _HttpAgent_waterMark, parsedTime, "f");
+         }
+         return decodedResponse;
+@@ -526,8 +535,8 @@ export class HttpAgent {
+                 throw new Error('Time was not found in the response or was not in its expected format.');
+             }
+             const date = decodeTime(bufFromBufLike(timeLookup));
+-            this.log('Time from response:', date);
+-            this.log('Time from response in milliseconds:', Number(date));
++            // this.log('Time from response:', date);
++            // this.log('Time from response in milliseconds:', Number(date));
+             return Number(date);
+         }
+         else {
+@@ -544,7 +553,7 @@ export class HttpAgent {
+         const callTime = Date.now();
+         try {
+             if (!canisterId) {
+-                this.log('Syncing time with the IC. No canisterId provided, so falling back to ryjl3-tyaaa-aaaaa-aaaba-cai');
++                // this.log('Syncing time with the IC. No canisterId provided, so falling back to ryjl3-tyaaa-aaaaa-aaaba-cai');
+             }
+             const status = await CanisterStatus.request({
+                 // Fall back with canisterId of the ICP Ledger
+@@ -567,7 +576,7 @@ export class HttpAgent {
+                 Authorization: 'Basic ' + btoa(this._credentials),
+             }
+             : {};
+-        this.log(`fetching "/api/v2/status"`);
++        // this.log(`fetching "/api/v2/status"`);
+         const response = await this._requestAndRetry(() => this._fetch('' + new URL(`/api/v2/status`, this._host), Object.assign({ headers }, this._fetchOptions)));
+         return cbor.decode(await response.arrayBuffer());
+     }
+@@ -661,10 +670,10 @@ _HttpAgent_waterMark = new WeakMap(), _HttpAgent_queryPipeline = new WeakMap(),
+     }
+     // Convert the timestamp to milliseconds
+     const timeStampInMs = Number(BigInt(timestamp) / BigInt(1000000));
+-    this.log('watermark and timestamp', {
+-        waterMark: this.waterMark,
+-        timestamp: timeStampInMs,
+-    });
++    // this.log('watermark and timestamp', {
++    //     waterMark: this.waterMark,
++    //     timestamp: timeStampInMs,
++    // });
+     // If the timestamp is less than the watermark, retry the request up to the retry limit
+     if (Number(this.waterMark) > timeStampInMs) {
+         const error = new AgentError('Timestamp is below the watermark. Retrying query.');
+diff --git a/node_modules/@dfinity/agent/lib/esm/observable.js b/node_modules/@dfinity/agent/lib/esm/observable.js
+index 0197911..8b4a9d6 100644
+--- a/node_modules/@dfinity/agent/lib/esm/observable.js
++++ b/node_modules/@dfinity/agent/lib/esm/observable.js
+@@ -4,9 +4,8 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
+     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+ };
+ var _Observable_instances, _Observable_call, _ObservableLog_instances, _ObservableLog_call;
+-export class Observable extends Function {
++export class Observable  {
+     constructor() {
+-        super();
+         _Observable_instances.add(this);
+         this.observers = [];
+         return new Proxy(this, {
+@@ -45,6 +44,6 @@ export class ObservableLog extends Observable {
+     }
+ }
+ _ObservableLog_instances = new WeakSet(), _ObservableLog_call = function _ObservableLog_call(message, ...rest) {
+-    this.log(message, ...rest);
++    // this.log(message, ...rest);
+ };
+ //# sourceMappingURL=observable.js.map
+\ No newline at end of file

@@ -155,7 +155,7 @@ const AccountItemWithMenu = ({
       testId={`wallet-account-${index + 1}`}
       key={account.address}
       onClick={onSelect}
-      onContextMenu={(e) => (e.preventDefault(), setIsMenuOpen(true))}
+      // onContextMenu={(e) => (e.preventDefault(), setIsMenuOpen(true))}
       account={account.address}
       rightComponent={
         <Inline alignVertical="center" space="6px">

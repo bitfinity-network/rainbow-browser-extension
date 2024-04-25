@@ -267,6 +267,25 @@ export const ToAddressInput = React.forwardRef<InputRefAPI, ToAddressProps>(
       onDropdownOpen,
       validateToAddress,
     } = props;
+    const isValidBtcAddress = (address: string) => {
+      const isBitcoinAddress = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(
+        address,
+      );
+
+      const isBitcoinBech32Address = /^(bc1|tb1)[0-9a-zA-HJ-NP-Z]{39,59}$/.test(
+        address,
+      );
+
+      const isBitcoinBech32RegtestAddress =
+        /^bcrt1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{39,59}$/.test(address);
+
+      const result =
+        isBitcoinAddress ||
+        isBitcoinBech32Address ||
+        isBitcoinBech32RegtestAddress;
+
+      return result;
+    };
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const { testnetMode } = useTestnetModeStore();
@@ -295,8 +314,12 @@ export const ToAddressInput = React.forwardRef<InputRefAPI, ToAddressProps>(
     }, [onDropdownOpen]);
 
     const inputVisible =
-      ((!toAddressOrName || !toEnsName) && !isAddress(toAddressOrName)) ||
-      !isAddress(toAddress || '');
+      ((!toAddressOrName || !toEnsName) &&
+        !isAddress(toAddressOrName) &&
+        !isValidBtcAddress(toAddressOrName)) ||
+      (!isAddress(toAddress || '') && !isValidBtcAddress(toAddressOrName));
+
+    console.log('inputVisible', inputVisible);
 
     const selectWalletAndCloseDropdown = useCallback(
       (address: Address) => {

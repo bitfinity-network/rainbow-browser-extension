@@ -49,11 +49,37 @@ export const useSendValidations = ({
     chainId: getNativeAssetChainId(),
   });
 
+  const [isBtcAddress, setIsBtcAddress] = useState(false);
+
+  const isValidBtcAddress = (address: string) => {
+    const isBitcoinAddress = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(address);
+
+    const isBitcoinBech32Address = /^(bc1|tb1)[0-9a-zA-HJ-NP-Z]{39,59}$/.test(
+      address,
+    );
+
+    const isBitcoinBech32RegtestAddress =
+      /^bcrt1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{39,59}$/.test(address);
+
+    const result =
+      isBitcoinAddress ||
+      isBitcoinBech32Address ||
+      isBitcoinBech32RegtestAddress;
+
+    return result;
+  };
+
   const [isValidToAddress, setIsValidToAddress] = useState(false);
 
   const validateToAddress = useCallback(
-    (address?: Address) =>
-      setIsValidToAddress(isValidAddress(address || toAddress || '')),
+    (address?: Address) => {
+      const isEthAddress = isValidAddress(address || toAddress || '');
+      const isBtcAddress = isValidBtcAddress(address || toAddress || '');
+      if (isEthAddress || isBtcAddress) {
+        setIsBtcAddress(isBtcAddress);
+        setIsValidToAddress(true);
+      }
+    },
     [toAddress],
   );
 
@@ -123,6 +149,9 @@ export const useSendValidations = ({
     if (!isValidToAddress && toAddressOrName !== '')
       return i18n.t('send.button_label.enter_valid_address');
 
+    if (isBtcAddress) {
+      return 'Bridge';
+    }
     if (!toAddress && !assetAmount && !nft) {
       return i18n.t('send.button_label.enter_address_and_amount');
     }
@@ -148,6 +177,7 @@ export const useSendValidations = ({
     assetAmount,
     enoughAssetBalance,
     enoughNativeAssetForGas,
+    isBtcAddress,
     isValidToAddress,
     nft,
     toAddress,
@@ -181,5 +211,6 @@ export const useSendValidations = ({
     isValidToAddress,
     readyForReview,
     validateToAddress,
+    isBtcAddress,
   };
 };

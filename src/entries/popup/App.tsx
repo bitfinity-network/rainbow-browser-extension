@@ -85,7 +85,7 @@ export function App() {
     });
 
     if (process.env.IS_DEV !== 'true') {
-      document.addEventListener('contextmenu', (e) => e.preventDefault());
+      // document.addEventListener('contextmenu', (e) => e.preventDefault());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
