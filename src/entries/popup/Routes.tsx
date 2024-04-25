@@ -34,6 +34,7 @@ import { useCommandKShortcuts } from './hooks/useCommandKShortcuts';
 import useKeyboardAnalytics from './hooks/useKeyboardAnalytics';
 import { useKeyboardShortcut } from './hooks/useKeyboardShortcut';
 import { useRainbowNavigate } from './hooks/useRainbowNavigate';
+import { Deposit } from './pages/bridge';
 import { Buy } from './pages/buy';
 import { CreatePassword } from './pages/createPassword';
 import { Home } from './pages/home';
@@ -799,6 +800,18 @@ const ROUTE_DATA = [
     element: (
       <AnimatedRoute direction="up" title={i18n.t('send.title')} protectedRoute>
         <Send />
+      </AnimatedRoute>
+    ),
+  },
+  {
+    path: ROUTES.BRIDGE_BITFINITY,
+    element: (
+      <AnimatedRoute
+        direction="up"
+        title={i18n.t('bridge_bitfinity.title')}
+        protectedRoute
+      >
+        <Deposit />
       </AnimatedRoute>
     ),
   },

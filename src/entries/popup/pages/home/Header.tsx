@@ -218,16 +218,15 @@ function ActionButtonsSection() {
               }
             }}
           />
-
-          {/* <ActionButton
+          <ActionButton
             symbol="creditcard.fill"
-            testId="header-link-buy"
-            text={i18n.t('wallet_header.buy')}
-            tabIndex={tabIndexes.WALLET_HEADER_BUY_BUTTON}
-            onClick={() => navigate(ROUTES.BUY)}
-            tooltipHint={shortcuts.home.BUY.display}
-            tooltipText={i18n.t('tooltip.buy_crypto')}
-          /> */}
+            testId="header-link-bridge"
+            text={i18n.t('wallet_header.bridge')}
+            tabIndex={tabIndexes.WALLET_HEADER_BRIDGE_BUTTON}
+            onClick={() => navigate(ROUTES.BRIDGE_BITFINITY)}
+            tooltipHint={shortcuts.home.BRIDGE.display}
+            tooltipText={i18n.t('tooltip.bridge')}
+          />
         </Inline>
       )}
     </Box>

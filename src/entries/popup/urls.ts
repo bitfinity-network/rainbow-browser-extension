@@ -62,6 +62,7 @@ export const ROUTES = {
   SEND: '/send', // Send
   SWAP: '/swap', // Swap
   BRIDGE: '/bridge', // Bridge
+  BRIDGE_BITFINITY: '/bridge-bitfinity',
   SIGN: '/sign', // Sign
   WALLETS: '/wallets', // Wallets
   WALLET_SWITCHER: '/wallet-switcher', // WalletSwitcher

@@ -649,6 +649,9 @@
       "confirm_hw": "Confirm on your device"
     }
   },
+  "bridge_bitfinity": {
+    "title": "Receive BTC"
+  },
   "swap": {
     "_actions": {
       "Swap": "Swap",
@@ -1503,7 +1506,8 @@
     "copy": "Copy",
     "swap": "Swap",
     "send": "Send",
-    "copy_toast": "Address Copied"
+    "copy_toast": "Address Copied",
+    "bridge": "Bridge"
   },
   "token_search": {
     "section_header": {
@@ -1688,7 +1692,8 @@
     "favorite": "Add to favorites",
     "unfavorite": "Remove from favorites",
     "estimated_difference": "Estimated difference in value",
-    "buy_crypto": "Buy and transfer crypto"
+    "buy_crypto": "Buy and transfer crypto",
+    "bridge": "Bridge tokens"
   },
   "simulation": {
     "title": "Simulated Result",

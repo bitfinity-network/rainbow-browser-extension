@@ -1,9 +1,9 @@
 import { Address } from 'wagmi';
 
-import { AddressOrEth, UniqueId } from '../types/assets';
+import { UniqueId } from '../types/assets';
 import { ChainId } from '../types/chains';
 
-export function truncateAddress(address?: AddressOrEth) {
+export function truncateAddress(address?: string) {
   if (!address) return '';
   return `${address?.slice(0, 6)}…${address?.slice(-4)}`;
 }

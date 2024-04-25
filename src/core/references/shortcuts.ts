@@ -100,9 +100,13 @@ export const shortcuts = {
     },
   },
   home: {
-    BUY: {
+    BRIDGE: {
       display: 'B',
       key: 'b',
+    },
+    BUY: {
+      display: 'Y',
+      key: 'y',
     },
     COPY_ADDRESS: {
       display: 'C',
