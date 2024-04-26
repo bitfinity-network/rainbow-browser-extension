@@ -4,6 +4,8 @@ import type { Chain } from 'wagmi';
 const HARDHAT_CHAIN_ID = 1337;
 const HARDHAT_OP_CHAIN_ID = 1338;
 
+export type BTCAddress = `bcrt${string}`;
+
 export const chainHardhat: Chain = {
   id: HARDHAT_CHAIN_ID,
   name: 'Hardhat',

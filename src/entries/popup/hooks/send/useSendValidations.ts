@@ -5,7 +5,7 @@ import { Address } from 'wagmi';
 
 import { i18n } from '~/core/languages';
 import { ParsedUserAsset } from '~/core/types/assets';
-import { ChainId } from '~/core/types/chains';
+import { BTCAddress, ChainId } from '~/core/types/chains';
 import { GasFeeLegacyParams, GasFeeParams } from '~/core/types/gas';
 import { UniqueAsset } from '~/core/types/nfts';
 import { chainIdFromChainName, getChain } from '~/core/utils/chains';
@@ -17,6 +17,7 @@ import {
   lessThan,
 } from '~/core/utils/numbers';
 
+import { isValidBtcAddress } from '../../utils/send';
 import { useNativeAsset } from '../useNativeAsset';
 
 export const useSendValidations = ({
@@ -31,7 +32,7 @@ export const useSendValidations = ({
   assetAmount?: string;
   nft?: UniqueAsset;
   selectedGas?: GasFeeParams | GasFeeLegacyParams;
-  toAddress?: Address;
+  toAddress?: Address | BTCAddress;
   toAddressOrName?: string;
 }) => {
   const [toAddressIsSmartContract, setToAddressIsSmartContract] =
@@ -50,24 +51,6 @@ export const useSendValidations = ({
   });
 
   const [isBtcAddress, setIsBtcAddress] = useState(false);
-
-  const isValidBtcAddress = (address: string) => {
-    const isBitcoinAddress = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(address);
-
-    const isBitcoinBech32Address = /^(bc1|tb1)[0-9a-zA-HJ-NP-Z]{39,59}$/.test(
-      address,
-    );
-
-    const isBitcoinBech32RegtestAddress =
-      /^bcrt1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{39,59}$/.test(address);
-
-    const result =
-      isBitcoinAddress ||
-      isBitcoinBech32Address ||
-      isBitcoinBech32RegtestAddress;
-
-    return result;
-  };
 
   const [isValidToAddress, setIsValidToAddress] = useState(false);
 

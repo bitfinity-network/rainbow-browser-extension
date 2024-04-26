@@ -49,18 +49,19 @@ import {
   Symbol,
   Text,
 } from '~/design-system';
-import { triggerAlert } from '~/design-system/components/Alert/Alert';
+// import { triggerAlert } from '~/design-system/components/Alert/Alert';
 import { AccentColorProvider } from '~/design-system/components/Box/ColorContext';
-import { RainbowError, logger } from '~/logger';
+// import { RainbowError, logger } from '~/logger';
 
 import {
   ExplainerSheet,
   useExplainerSheetParams,
 } from '../../components/ExplainerSheet/ExplainerSheet';
 import { Navbar } from '../../components/Navbar/Navbar';
+import { Spinner } from '../../components/Spinner/Spinner';
 import { CursorTooltip } from '../../components/Tooltip/CursorTooltip';
 import { TransactionFee } from '../../components/TransactionFee/TransactionFee';
-import { isLedgerConnectionError } from '../../handlers/ledger';
+// import { isLedgerConnectionError } from '../../handlers/ledger';
 import { getWallet, sendTransaction } from '../../handlers/wallet';
 import { useSendAsset } from '../../hooks/send/useSendAsset';
 import { useSendInputs } from '../../hooks/send/useSendInputs';
@@ -83,7 +84,6 @@ import { SendTokenInput } from './SendTokenInput';
 import { ToAddressInput } from './ToAddressInput';
 import { ValueInput } from './ValueInput';
 import { BtcBridgeClass } from './btc';
-import { Spinner } from '../../components/Spinner/Spinner';
 
 interface ChildInputAPI {
   blur: () => void;
