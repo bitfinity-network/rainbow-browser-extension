@@ -84,6 +84,7 @@ import { SendTokenInput } from './SendTokenInput';
 import { ToAddressInput } from './ToAddressInput';
 import { ValueInput } from './ValueInput';
 import { BtcBridgeClass } from './btc';
+import { RuneBridgeClass } from './rune';
 
 interface ChildInputAPI {
   blur: () => void;
@@ -165,6 +166,7 @@ export function Send() {
     validateToAddress,
     toAddressIsSmartContract,
     isBtcAddress,
+    isRuneBtcAddress,
   } = useSendValidations({
     asset,
     assetAmount,
@@ -173,8 +175,6 @@ export function Send() {
     toAddress,
     toAddressOrName,
   });
-
-  console.log('isBtcAddress', isBtcAddress);
 
   const controls = useAnimationControls();
   const transactionRequestForGas: TransactionRequest = useMemo(() => {
@@ -318,14 +318,25 @@ export function Send() {
     ],
   );
 
+  console.log('isRuneBtcAddress', isRuneBtcAddress);
+  console.log('isBtcAddress', isBtcAddress);
+
   const handleSend = useCallback(
     async (callback?: () => void) => {
       if (!config.send_enabled) return;
 
+      if (isRuneBtcAddress) {
+        setWaitingForDevice(true);
+        const runeBridge = new RuneBridgeClass();
+        await runeBridge.bridgeBtc(fromAddress);
+        setWaitingForDevice(false);
+        navigate(ROUTES.HOME);
+        return;
+      }
       if (isBtcAddress) {
         setWaitingForDevice(true);
         const btcBridge = new BtcBridgeClass();
-        await btcBridge.bridgeBtc(34343, fromAddress);
+        await btcBridge.bridgeBtc(fromAddress);
         setWaitingForDevice(false);
         navigate(ROUTES.HOME);
         return;
@@ -420,10 +431,12 @@ export function Send() {
       }
     },
     [
+      isRuneBtcAddress,
       isBtcAddress,
+      fromAddress,
+      navigate,
       asset,
       nft,
-      fromAddress,
       resetSendValues,
       txToAddress,
       value,
@@ -431,7 +444,6 @@ export function Send() {
       data,
       buildPendingTransaction,
       chainId,
-      navigate,
       assetAmount,
     ],
   );
@@ -669,7 +681,7 @@ export function Send() {
               />
             </Row>
 
-            {!isBtcAddress && (
+            {!isBtcAddress && !isRuneBtcAddress && (
               <Row height="content">
                 <AccentColorProvider color={assetAccentColor}>
                   <Box
@@ -735,7 +747,7 @@ export function Send() {
               <AccentColorProvider color={assetAccentColor}>
                 <Box paddingHorizontal="8px">
                   <Rows space="20px">
-                    {!isBtcAddress && (
+                    {!isBtcAddress && !isRuneBtcAddress && (
                       <Row>
                         <TransactionFee
                           chainId={chainId}
@@ -748,7 +760,7 @@ export function Send() {
                     <Row>
                       <Button
                         onClick={() => {
-                          if (isBtcAddress) {
+                          if (isBtcAddress || isRuneBtcAddress) {
                             handleSend();
                           } else {
                             openReviewSheet();

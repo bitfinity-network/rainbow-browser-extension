@@ -297,10 +297,6 @@ export const ButtonWrapper = forwardRef<HTMLButtonElement, ButtonWrapperProps>(
         color: color ?? 'accent',
       })[variant];
 
-    console.error('background:', background);
-    console.error('variant:', variant);
-    console.error('color:', color);
-
     let outlineColor = undefined;
     // Only apply outline to buttons with tabIndex
     if (tabIndex !== undefined) {

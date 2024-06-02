@@ -40,7 +40,7 @@ import { WalletAvatar } from '../../components/WalletAvatar/WalletAvatar';
 import { WalletContextMenu } from '../../components/WalletContextMenu';
 import { useAllFilteredWallets } from '../../hooks/send/useAllFilteredWallets';
 import { useWalletInfo } from '../../hooks/useWalletInfo';
-import { isValidBtcAddress } from '../../utils/send';
+import { isValidBtcAddress, isValidRuneBtcAddress } from '../../utils/send';
 
 import { InputActionButton } from './InputActionButton';
 import { RowHighlightWrapper } from './RowHighlightWrapper';
@@ -299,8 +299,11 @@ export const ToAddressInput = React.forwardRef<InputRefAPI, ToAddressProps>(
     const inputVisible =
       ((!toAddressOrName || !toEnsName) &&
         !isAddress(toAddressOrName) &&
-        !isValidBtcAddress(toAddressOrName)) ||
-      (!isAddress(toAddress || '') && !isValidBtcAddress(toAddressOrName));
+        !isValidBtcAddress(toAddressOrName) &&
+        !isValidRuneBtcAddress(toAddressOrName)) ||
+      (!isAddress(toAddress || '') &&
+        !isValidBtcAddress(toAddressOrName) &&
+        !isValidRuneBtcAddress(toAddressOrName));
 
     const selectWalletAndCloseDropdown = useCallback(
       (address: Address) => {

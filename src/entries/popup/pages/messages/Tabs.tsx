@@ -239,11 +239,13 @@ export function Tabs({
   initialTab = tabs[0],
   expanded,
   onExpand,
+  fullWidthTabContentNotExpanded,
 }: PropsWithChildren<{
   tabs: string[];
   initialTab?: string;
   expanded: boolean;
   onExpand: VoidFunction;
+  fullWidthTabContentNotExpanded?: boolean;
 }>) {
   const [tab, setTab] = useState(initialTab);
 
@@ -274,7 +276,11 @@ export function Tabs({
           borderWidth="1px"
           width="full"
           position="relative"
-          style={{ maxHeight: expanded ? '100%' : 300, overflow: 'hidden' }}
+          style={{
+            maxHeight:
+              expanded || fullWidthTabContentNotExpanded ? '100%' : 300,
+            overflow: fullWidthTabContentNotExpanded ? 'scroll' : 'hidden',
+          }}
         >
           {tabs.length > 1 && <TabsNav />}
           <AnimatePresence mode="wait">

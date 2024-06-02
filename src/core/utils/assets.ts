@@ -422,24 +422,22 @@ export const getAssetBalance = async ({
   provider: Provider;
 }) => {
   try {
-    console.log(
-      'code exists (Cashium 0xAab0700ef3768009D71cA47E2349069fA0025358):',
-      await provider.getCode('0xAab0700ef3768009D71cA47E2349069fA0025358'),
-      provider.getNetwork(),
-    );
-    console.log(
-      'code exists (Cashium 0x53611Ab037767647498EBd555C4CC339db4Ee617):',
-      await provider.getCode('0x53611Ab037767647498EBd555C4CC339db4Ee617'),
-      provider.getNetwork(),
-    );
+    // console.log(
+    //   'code exists (Cashium 0xAab0700ef3768009D71cA47E2349069fA0025358):',
+    //   await provider.getCode('0xAab0700ef3768009D71cA47E2349069fA0025358'),
+    //   provider.getNetwork(),
+    // );
+    // console.log(
+    //   'code exists (Cashium 0x53611Ab037767647498EBd555C4CC339db4Ee617):',
+    //   await provider.getCode('0x53611Ab037767647498EBd555C4CC339db4Ee617'),
+    //   provider.getNetwork(),
+    // );
 
     const contract = getContract({
       address: assetAddress,
       abi: erc20ABI,
       signerOrProvider: provider,
     });
-
-    console.log('contract:', contract);
 
     const balance = await contract.balanceOf(currentAddress);
 

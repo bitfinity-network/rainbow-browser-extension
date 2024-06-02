@@ -17,7 +17,7 @@ import {
   lessThan,
 } from '~/core/utils/numbers';
 
-import { isValidBtcAddress } from '../../utils/send';
+import { isValidBtcAddress, isValidRuneBtcAddress } from '../../utils/send';
 import { useNativeAsset } from '../useNativeAsset';
 
 export const useSendValidations = ({
@@ -51,6 +51,7 @@ export const useSendValidations = ({
   });
 
   const [isBtcAddress, setIsBtcAddress] = useState(false);
+  const [isRuneBtcAddress, setIsRuneBtcAddress] = useState(false);
 
   const [isValidToAddress, setIsValidToAddress] = useState(false);
 
@@ -58,8 +59,12 @@ export const useSendValidations = ({
     (address?: Address) => {
       const isEthAddress = isValidAddress(address || toAddress || '');
       const isBtcAddress = isValidBtcAddress(address || toAddress || '');
-      if (isEthAddress || isBtcAddress) {
+      const isRuneBtcAddress = isValidRuneBtcAddress(
+        address || toAddress || '',
+      );
+      if (isEthAddress || isBtcAddress || isRuneBtcAddress) {
         setIsBtcAddress(isBtcAddress);
+        setIsRuneBtcAddress(isRuneBtcAddress);
         setIsValidToAddress(true);
       }
     },
@@ -132,7 +137,7 @@ export const useSendValidations = ({
     if (!isValidToAddress && toAddressOrName !== '')
       return i18n.t('send.button_label.enter_valid_address');
 
-    if (isBtcAddress) {
+    if (isBtcAddress || isRuneBtcAddress) {
       return 'Bridge';
     }
     if (!toAddress && !assetAmount && !nft) {
@@ -161,6 +166,7 @@ export const useSendValidations = ({
     enoughAssetBalance,
     enoughNativeAssetForGas,
     isBtcAddress,
+    isRuneBtcAddress,
     isValidToAddress,
     nft,
     toAddress,
@@ -195,5 +201,6 @@ export const useSendValidations = ({
     readyForReview,
     validateToAddress,
     isBtcAddress,
+    isRuneBtcAddress,
   };
 };

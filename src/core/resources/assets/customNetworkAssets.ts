@@ -234,7 +234,6 @@ async function customNetworkAssetsFunction({
             : null;
 
         const chainAssets = rainbowChainAssets?.[chain.id] || [];
-        console.error('other assets on chain:', JSON.stringify(chainAssets));
 
         const chainParsedAssetBalances = await Promise.allSettled(
           chainAssets.map((asset) =>
@@ -244,11 +243,6 @@ async function customNetworkAssetsFunction({
               provider,
             }),
           ),
-        );
-
-        console.error(
-          'chainParsedAssetBalances:',
-          JSON.stringify(chainParsedAssetBalances),
         );
 
         const chainParsedAssets = chainParsedAssetBalances

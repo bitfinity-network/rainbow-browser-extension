@@ -8,13 +8,18 @@ import { Navbar } from '../../components/Navbar/Navbar';
 
 export function Deposit() {
   return (
-    <Box>
+    <>
       <Navbar
         title={i18n.t('bridge_bitfinity.title')}
         background={'surfaceSecondary'}
         leftComponent={<Navbar.CloseButton />}
       />
-      <DepositTabs />
-    </Box>
+      <Box
+        background="surfaceSecondary"
+        style={{ height: 535, overflow: 'hidden' }}
+      >
+        <DepositTabs />
+      </Box>
+    </>
   );
 }

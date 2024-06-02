@@ -4,7 +4,7 @@ import { Address, useEnsAddress, useEnsName } from 'wagmi';
 import { useENSProfile } from '~/core/resources/metadata/ensProfile';
 import { isENSAddressFormat } from '~/core/utils/ethereum';
 
-import { isValidBtcAddress } from '../utils/send';
+import { isValidBtcAddress, isValidRuneBtcAddress } from '../utils/send';
 
 export const useEns = ({
   addressOrName,
@@ -35,7 +35,9 @@ export const useEns = ({
       ? addressOrName
       : ensName || undefined,
     ensAddress:
-      isAddress(addressOrName) || isValidBtcAddress(addressOrName)
+      isAddress(addressOrName) ||
+      isValidBtcAddress(addressOrName) ||
+      isValidRuneBtcAddress(addressOrName)
         ? (addressOrName as never)
         : ensAddress || undefined,
     ensAvatar: ensProfile?.avatar,
